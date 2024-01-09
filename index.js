@@ -1,4 +1,5 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const cors = require('cors');
 require('dotenv').config();
@@ -9,6 +10,25 @@ const port = process.env.PORT || 5000;
 // Middle-wires
 app.use(cors());
 app.use(express.json()) // body parser
+
+// JWT verifier
+function jwtVerifier(req, res, next) {
+    const authHeaders = req.headers.authorization;
+    if (!authHeaders) {
+        return res.status(401).send({ message: 'Unauthorized access' })
+    }
+    const accessToken = authHeaders.split(' ')[1];
+
+    jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+        if (err) {
+            console.log('jwt Error:',err);
+            return res.status(403).send({ message: 'Forbidden Access' })
+        }
+        req.decoded = decoded;
+        next();
+    })
+    
+}
 
 // MongoDB connection string code
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.vugesio.mongodb.net/?retryWrites=true&w=majority`;
@@ -26,7 +46,15 @@ async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
-        const servicesCollection = await client.db("geniusCar").collection("services");
+        const servicesCollection = client.db("geniusCar").collection("services");
+        const orderCollection = client.db("geniusCar").collection("orders");
+
+        //AUTHENTICATION WITH JWT
+        app.post('/login', async (req, res) => {
+            const user = req.body;
+            const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+            res.send({ accessToken })
+        })
 
         // To get all services data
         app.get('/service', async (req, res) => {
@@ -56,6 +84,28 @@ async function run() {
             const query = { _id: new ObjectId(id) };
             const result = await servicesCollection.deleteOne(query);
             res.send(result);
+        })
+
+        // Getting order data from clientSide
+        app.post('/order', async (req, res) => {
+            const order = req.body;
+            const result = await orderCollection.insertOne(order);
+            res.send(result);
+        })
+
+        // Getting order data by email
+        app.get('/orders', jwtVerifier, async (req, res) => {
+            const userEmail = req.query;
+            const decodedEmail = req.decoded.email;
+            if(userEmail.email === decodedEmail) {
+                const cursor = orderCollection.find(userEmail);
+                const orders = await cursor.toArray();
+                res.send(orders);
+            }
+            else {
+                return res.status(403).send({message: 'Forbidden Access'})
+            }
+            
         })
 
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
