@@ -21,13 +21,13 @@ function jwtVerifier(req, res, next) {
 
     jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
         if (err) {
-            console.log('jwt Error:',err);
+            console.log('jwt Error:', err);
             return res.status(403).send({ message: 'Forbidden Access' })
         }
         req.decoded = decoded;
         next();
     })
-    
+
 }
 
 // MongoDB connection string code
@@ -97,15 +97,15 @@ async function run() {
         app.get('/orders', jwtVerifier, async (req, res) => {
             const userEmail = req.query;
             const decodedEmail = req.decoded.email;
-            if(userEmail.email === decodedEmail) {
+            if (userEmail.email === decodedEmail) {
                 const cursor = orderCollection.find(userEmail);
                 const orders = await cursor.toArray();
                 res.send(orders);
             }
             else {
-                return res.status(403).send({message: 'Forbidden Access'})
+                return res.status(403).send({ message: 'Forbidden Access' })
             }
-            
+
         })
 
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
@@ -124,3 +124,6 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log("Listening to port:", port);
 })
+
+// Export the Express API
+module.exports = app;
