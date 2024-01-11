@@ -121,9 +121,9 @@ app.get('/', (req, res) => {
     res.send("Genius Car Service Server is running");
 })
 
-app.listen(port, () => {
-    console.log("Listening to port:", port);
-})
+// app.listen(port, () => {
+//     console.log("Listening to port:", port);
+// })
 
 // Export the Express API
-module.exports = app
+module.exports = app;
