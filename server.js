@@ -10,7 +10,7 @@ const port = process.env.PORT || 5000;
 // Middle-wires
 const corsOpts = {
     origin: "*",
-    methods: ["GET", "POST", "DELETE"],
+    methods: ["GET", "POST"],
     allowedHeaders: ['Content-Type',]
 }
 app.use(cors(corsOpts));
@@ -132,9 +132,9 @@ app.get('/', (req, res) => {
     res.send("Genius Car Service Server is running");
 })
 
-// app.listen(port, () => {
-//     console.log("Listening to port:", port);
-// })
+app.listen(port, () => {
+    // console.log("Listening to port:", port);
+})
 
 // Export the Express API
 module.exports = app;
