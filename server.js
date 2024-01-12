@@ -61,15 +61,10 @@ async function run() {
             res.send({ accessToken })
         })
 
-        // CORS
-        // app.get('/cors', (req, res) => {
-        //     res.set('Access-Control-Allow-Origin', '*');
-        //     res.send({ "msg": "This has CORS enabled" })
-        // })
-
         // To get all services data
         app.get('/service', async (req, res) => {
-            const cursor = servicesCollection.find();
+            const query = {};
+            const cursor = servicesCollection.find(query);
             const services = await cursor.toArray();
             res.send(services);
         })
