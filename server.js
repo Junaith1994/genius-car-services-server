@@ -8,7 +8,12 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // Middle-wires
-app.use(cors());
+const corsOpts = {
+    origin: "*",
+    methods: ["GET", "POST", "DELETE"],
+    allowedHeaders: ['Content-Type',]
+}
+app.use(cors(corsOpts));
 app.use(express.json()) // body parser
 
 // JWT verifier
@@ -55,6 +60,12 @@ async function run() {
             const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
             res.send({ accessToken })
         })
+
+        // CORS
+        // app.get('/cors', (req, res) => {
+        //     res.set('Access-Control-Allow-Origin', '*');
+        //     res.send({ "msg": "This has CORS enabled" })
+        // })
 
         // To get all services data
         app.get('/service', async (req, res) => {
