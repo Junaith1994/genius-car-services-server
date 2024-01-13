@@ -1,18 +1,4 @@
 {
-    "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "/",
-            "methods": [
-                "GET",
-                "POST",
-                "PUT",
-                "PATCH",
-                "DELETE",
-                "OPTIONS"
-            ]
-        }
-    ],
     "rewrites": [
         {
             "source": "/(.*)",
