@@ -11,7 +11,7 @@ const port = process.env.PORT || 5000;
 const corsOpts = {
     origin: "*",
     methods: ["GET", "POST", "DELETE"],
-    allowedHeaders: ['Content-Type',]
+    allowedHeaders: ['Content-Type', 'authorization']
 }
 app.use(cors(corsOpts));
 app.use(express.json()) // body parser
