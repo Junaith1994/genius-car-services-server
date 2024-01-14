@@ -2,7 +2,7 @@
   "name": "genius-car-services-server",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "start-dev": "nodemon index.js",
